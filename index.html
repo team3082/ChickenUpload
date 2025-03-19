@@ -87,12 +87,9 @@
     function processScannedData(data) {
       try {
         const parsedData = JSON.parse(data);
-
+  
         // Validate the data structure
         if (typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-          const intKeys = Object.keys(parsedData).filter(key => typeof parsedData[key] === 'number');
-          const stringKeys = Object.keys(parsedData).filter(key => typeof parsedData[key] === 'string');
-
           //send the data 
           db.collection('TestUpload').add(parsedData)
             .then(() => {
