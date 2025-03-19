@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Scanner</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+  <style>
+    body {
+      text-align: center;
+      margin: 20px;
+    }
+    video {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+    #scanned-data {
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chicken Scout Data Uploader</h1>
+  <div>
+    <video id="qr-video" width="300" height="200"></video>
+  </div>
+  <div>
+    <p>Scanned Data: <span id="scanned-data"></span></p>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDShBwN6mChQt9P0PdKxsOR5HG_Uq172nI",
+      authDomain: "chickenscout-21e32.firebaseapp.com",
+      databaseURL: "https://chickenscout-21e32-default-rtdb.firebaseio.com",
+      projectId: "chickenscout-21e32",
+      storageBucket: "chickenscout-21e32.firebasestorage.app",
+      messagingSenderId: "177473839950",
+      appId: "1:177473839950:web:22a232d21ad941cc1c341f",
+      measurementId: "G-BMHHNB3SZ2"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Get elements
+    const video = document.getElementById('qr-video');
+    const scannedDataElement = document.getElementById('scanned-data');
+
+    // Access the camera and start scanning
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(function(stream) {
+        video.srcObject = stream;
+        video.setAttribute("playsinline", true); // Required for iOS
+        video.play();
+        requestAnimationFrame(scanQR);
+      })
+      .catch(function(err) {
+        console.error("Error accessing the camera: ", err);
+      });
+
+    // Function to scan QR code
+    function scanQR() {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+      if (code) {
+        scannedDataElement.textContent = code.data;
+        processScannedData(code.data);
+      }
+
+      requestAnimationFrame(scanQR);
+    }
+
+    // Function to process scanned data and send to Firebase
+    function processScannedData(data) {
+      try {
+        const parsedData = JSON.parse(data);
+
+        // Validate the data structure
+        if (typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+          const intKeys = Object.keys(parsedData).filter(key => typeof parsedData[key] === 'number');
+          const stringKeys = Object.keys(parsedData).filter(key => typeof parsedData[key] === 'string');
+
+          //send the data 
+          db.collection('TestUpload').add(parsedData)
+            .then(() => {
+              console.log("Data sent to Firebase successfully!");
+            })
+            .catch((error) => {
+              console.error("Error sending data to Firebase: ", error);
+            });
+        
+        } else {
+          console.error("Invalid data: Expected a JSON object.");
+        }
+      } catch (error) {
+        console.error("Error parsing scanned data: ", error);
+      }
+    }
+  </script>
+</body>
+</html>
