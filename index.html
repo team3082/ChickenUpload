@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Scanner</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
   <style>
     body {
@@ -20,18 +22,31 @@
       font-weight: bold;
       color: green;
     }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:disabled {
+      background-color: #ccc;
+    }
   </style>
 </head>
 <body>
   <h1>Chicken Scout Data Uploader</h1>
   <div>
-    <video id="qr-video" width="300" height="200"></video>
+    <video id="qr-video" width="300" height="200" autoplay playsinline></video>
   </div>
   <div>
     <p>Scanned Data: <span id="scanned-data"></span></p>
   </div>
+  <button id="submit-btn" disabled>Submit Data</button>
 
-  <script>
+  <script type="module">
     // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDShBwN6mChQt9P0PdKxsOR5HG_Uq172nI",
@@ -45,30 +60,43 @@
     };
 
     // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     // Get elements
     const video = document.getElementById('qr-video');
     const scannedDataElement = document.getElementById('scanned-data');
+    const submitBtn = document.getElementById('submit-btn');
+
+    let scannedData = null;
+    let stopScanning = false;
 
     // Access the camera and start scanning
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-      .then(function(stream) {
+      .then((stream) => {
         video.srcObject = stream;
         video.setAttribute("playsinline", true); // Required for iOS
         video.play();
-        requestAnimationFrame(scanQR);
       })
-      .catch(function(err) {
+      .catch((err) => {
         console.error("Error accessing the camera: ", err);
       });
 
+    // Wait for video to be ready before scanning
+    video.addEventListener("loadedmetadata", () => {
+      setTimeout(scanQR, 500);
+    });
+
     // Function to scan QR code
     function scanQR() {
+      if (stopScanning || video.readyState !== video.HAVE_ENOUGH_DATA) {
+        setTimeout(scanQR, 500);
+        return;
+      }
+
       const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth || video.videoHeight;
+      canvas.height = video.videoHeight || video.videoWidth;
       const context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -76,29 +104,23 @@
       const code = jsQR(imageData.data, imageData.width, imageData.height);
 
       if (code) {
-        scannedDataElement.textContent = code.data;
-        processScannedData(code.data);
+        scannedData = code.data;
+        scannedDataElement.textContent = scannedData;
+        stopScanning = true;  // Stop scanning once QR code is found
+        submitBtn.disabled = false;  // Enable the submit button
       }
 
-      requestAnimationFrame(scanQR);
+      setTimeout(scanQR, 500);  // Reduce CPU load
     }
 
     // Function to process scanned data and send to Firebase
-    function processScannedData(data) {
+    async function processScannedData(data) {
       try {
         const parsedData = JSON.parse(data);
-  
-        // Validate the data structure
+
         if (typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-          //send the data 
-          db.collection('TestUpload').add(parsedData)
-            .then(() => {
-              console.log("Data sent to Firebase successfully!");
-            })
-            .catch((error) => {
-              console.error("Error sending data to Firebase: ", error);
-            });
-        
+          await addDoc(collection(db, 'TestUpload'), parsedData);
+          console.log("Data sent to Firebase successfully!");
         } else {
           console.error("Invalid data: Expected a JSON object.");
         }
@@ -106,6 +128,14 @@
         console.error("Error parsing scanned data: ", error);
       }
     }
+
+    // Submit button click handler
+    submitBtn.addEventListener("click", () => {
+      if (scannedData) {
+        processScannedData(scannedData);
+      }
+    });
   </script>
 </body>
 </html>
+
