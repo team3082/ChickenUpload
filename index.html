@@ -37,6 +37,14 @@
       *::after {
         box-sizing: border-box;
       }
+
+      * {
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+        scrollbar-width: none; /* Firefox */
+      }
+      *::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+      }
       select {
         appearance: none;
         border: none;
@@ -57,11 +65,14 @@
         background-color: #1f1b2b;
       }
       .section {
-        position: relative;
+        position: fixed;
+        overflow-y: scroll;
         top: 40px;
         bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
         background-color: #121019;
-        padding: 50px 30px;
+        padding: 64px 48px;
         border-radius: 0.25em;
         box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
         display: flex;
@@ -73,6 +84,9 @@
         padding: 20px !important;
         border-radius: 8px;
         border: none !important;
+        display: flex;
+        flex-flow: column;
+        gap: 16px;
       }
 
       #my-qr-reader img[alt="Info icon"] {
@@ -86,6 +100,14 @@
 
       #my-qr-reader__header_message {
         border: none !important;
+        padding: 8px !important;
+        border-radius: 8px;
+      }
+
+      span:has(select) {
+        display: flex;
+        flex-flow: row;
+        gap: 8px;
       }
       #my-qr-reader img[alt="Camera based scan"] {
         width: 100px;
