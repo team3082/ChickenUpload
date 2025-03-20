@@ -32,10 +32,34 @@
 
       .container h1 {
       }
-
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      select {
+        appearance: none;
+        border: none;
+        padding: 0 1em 0 0;
+        margin: 0;
+        width: 100%;
+        cursor: inherit;
+        line-height: inherit;
+        outline: none;
+        width: 100%;
+        min-width: 15ch;
+        max-width: 30ch;
+        color: white;
+        border-radius: 0.25em;
+        padding: 6px 8px;
+        cursor: pointer;
+        line-height: 1.1;
+        background-color: #1f1b2b;
+      }
       .section {
         position: relative;
         top: 40px;
+        bottom: 40px;
         background-color: #121019;
         padding: 50px 30px;
         border-radius: 0.25em;
@@ -104,7 +128,6 @@
     <div class="container">
       <div class="section">
         <h1>Chicken Scout Upload</h1>
-
         <div id="my-qr-reader"></div>
       </div>
     </div>
