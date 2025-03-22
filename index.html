@@ -89,7 +89,13 @@
         flex-flow: column;
         gap: 16px;
       }
-
+      @media only screen and (max-width: 600px) {
+        .section {
+          top: 40px;
+          width: calc(100vw - 80px);
+          height: calc(100vh - 80px);
+        }
+      }
       #my-qr-reader img[alt="Info icon"] {
         display: none;
       }
@@ -104,7 +110,7 @@
         padding: 8px !important;
         border-radius: 8px;
       }
-      div:has(>label[for=html5-qrcode-private-filescan-input]) {
+      div:has(> label[for="html5-qrcode-private-filescan-input"]) {
         border: 2px #1f1b2b solid !important;
         padding: 32px !important;
         border-radius: 8px;
@@ -163,7 +169,7 @@
   <body>
     <div class="container">
       <div class="section">
-        <h1 style="width: 396px;">Chicken Scout Upload</h1>
+        <h1 style="width: 396px">Chicken Scout Upload</h1>
         <div id="my-qr-reader"></div>
       </div>
     </div>
