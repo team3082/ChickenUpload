@@ -1,0 +1,155 @@
+body {
+    font-family: 'Inter', sans-serif; /* Add fallback font */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center content vertically */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Use min-height instead of height */
+    box-sizing: border-box;
+    text-align: center;
+    color: #ffffff;
+    background: url("scouting bg.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto; /* Center the container */
+    padding: 10px; /* Add padding for better spacing */
+}
+
+.container h1 {
+    font-size: 24px; /* Adjust heading size for mobile */
+    margin-bottom: 20px; /* Add spacing below the heading */
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+select {
+    appearance: none;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100%;
+    cursor: inherit;
+    line-height: inherit;
+    outline: none;
+    min-width: 15ch;
+    max-width: 30ch;
+    color: white;
+    border-radius: 0.25em;
+    padding: 6px 8px;
+    cursor: pointer;
+    line-height: 1.1;
+    background-color: #1f1b2b;
+}
+
+.section {
+    position: relative; /* Change to relative for better mobile behavior */
+    overflow-y: auto; /* Ensure it's scrollable */
+    width: 90%; /* Adjust width for mobile */
+    max-width: 500px; /* Limit maximum width */
+    margin: 20px auto; /* Center the section */
+    background-color: #121019;
+    padding: 20px; /* Reduce padding for mobile */
+    border-radius: 8px;
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: 16px;
+}
+
+#my-qr-reader {
+    padding: 10px !important; /* Reduce padding for mobile */
+    border-radius: 8px;
+    border: none !important;
+    display: flex;
+    flex-flow: column;
+    gap: 16px;
+}
+
+#my-qr-reader img[alt="Info icon"] {
+    display: none;
+}
+
+#my-qr-reader__dashboard_section {
+    display: flex;
+    flex-flow: column;
+    gap: 12px;
+}
+
+#my-qr-reader__header_message {
+    border: none !important;
+    padding: 8px !important;
+    border-radius: 8px;
+}
+
+div:has(>label[for=html5-qrcode-private-filescan-input]) {
+    border: 2px #1f1b2b solid !important;
+    padding: 16px !important; /* Reduce padding for mobile */
+    border-radius: 8px;
+}
+
+span:has(select) {
+    display: flex;
+    flex-flow: row;
+    gap: 16px;
+    margin-right: 0px !important;
+    width: 100%; /* Make it full width */
+    max-width: 400px; /* Limit maximum width */
+    justify-content: center;
+}
+
+#my-qr-reader img[alt="Camera based scan"],
+#my-qr-reader img[alt="File based scan"] {
+    width: 80px; /* Reduce size for mobile */
+    height: 80px; /* Reduce size for mobile */
+    filter: invert(1);
+}
+
+button {
+    border: none;
+    padding: 10px 20px;
+    outline: none;
+    border-radius: 0.25em;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    background-color: #688cdbad;
+    transition: 0.3s background-color;
+}
+
+button:hover {
+    background-color: #688cdb;
+}
+
+#html5-qrcode-anchor-scan-type-change {
+    text-decoration: none !important;
+    color: #688cdb;
+}
+
+video {
+    width: 100% !important; /* Make video responsive */
+    max-width: 400px; /* Limit maximum width */
+    border: 1px solid #121019 !important;
+    border-radius: 0.25em;
+}
